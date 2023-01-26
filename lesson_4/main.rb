@@ -6,10 +6,14 @@
 # для классов, который будет содержать общие методы и свойства
 # 3. Определить, какие методы могут быть помещены в private/protected и вынести
 # их в такую секцию. В комментарии к методу обосновать, почему он был вынесен в private/protected
+# 4. Вагоны теперь делятся на грузовые и пассажирские(отдельные классы).
+# К пассажирскому поезду можно прицепить только пассажирские, к грузовому - грузовые.
 require_relative './railway_station'
 require_relative './route'
 require_relative './passenger_train'
 require_relative './cargo_train'
+require_relative './passenger_carriage'
+require_relative './cargo_carriage'
 
 # Создаём несколько станций, маршрут и поезд, чтобы посмотреть что всё работает правильно
 spb = RailwayStation.new('Санкт-Петербург')
@@ -27,7 +31,7 @@ route_to_summer.add_station(rostov)
 route_to_summer.add_station(krasnodar)
 route_to_summer.add_station(sochi)
 
-passenger_train = PassengerTrain.new(-10)
+passenger_train = PassengerTrain.new
 passenger_train.route = route_to_summer
 
 moscow.receive_train(CargoTrain.new)
@@ -38,7 +42,7 @@ spb.receive_train(passenger_train)
   puts "\nПоезд прибыл на станцию: #{passenger_train.station.name}."
   puts "Предыдущая станция: #{passenger_train.previous_station.name}. " \
        "Следующая станция: #{passenger_train.next_station.name}."
-  passenger_train.attach_carriage
+  passenger_train.attach_carriage(PassengerCarriage.new)
   puts passenger_train.station.trains_info
 end
 

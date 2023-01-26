@@ -16,9 +16,8 @@ class Train
   attr_accessor :station, :previous_station, :route
   attr_reader :carriages, :speed
 
-  def initialize(carriages = 0)
-    @carriages = carriages.to_i
-    @carriages = 0 if carriages.negative?
+  def initialize
+    @carriages = []
     @speed = 0
   end
 
