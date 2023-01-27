@@ -7,22 +7,14 @@ class PassengerTrain < Train
   DEFAULT_SPEED = 150
 
   def attach_carriage(carriage)
+    return puts impossible_attach_detach unless stopped?
+
     if carriage.instance_of?(PassengerCarriage)
       carriages << carriage
       puts "Прицепили 1 вагон. Всего вагонов прицеплено: #{carriages.size}."
     else
       puts 'Не получилось прицепить вагон. К пассажирскому поезду можно прицеплять ' \
            "только пассажирские вагоны. Всего вагонов прицеплено: #{carriages.size}."
-    end
-  end
-
-  def detach_carriage
-    if speed.zero?
-      if carriages.pop
-        puts "Отцепили 1 вагон. Всего вагонов прицеплено: #{carriages.size}."
-      else
-        puts "Не получилось отцепить вагон. Всего вагонов прицеплено: #{carriages.size}."
-      end
     end
   end
 

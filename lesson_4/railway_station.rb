@@ -24,6 +24,7 @@ class RailwayStation
     @trains << train unless @trains.include?(train)
     train.previous_station = train.station
     train.station = self
+    train.stop
   end
 
   def send_train(train)
@@ -33,7 +34,7 @@ class RailwayStation
     train.next_station.receive_train(train)
   end
 
-  def trains_info
+  def station_info
     passenger_trains = 0
     cargo_trains = 0
 

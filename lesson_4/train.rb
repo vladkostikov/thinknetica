@@ -27,23 +27,33 @@ class Train
     @@trains << self
   end
 
-  def attach_carriage
-    @carriages += 1 if speed.zero?
-    puts "Прицепили 1 вагон. Всего вагонов прицеплено: #{carriages}."
+  def attach_carriage(carriage)
+    return puts impossible_attach_detach unless stopped?
+
+    if carriage.instance_of?(Carriage)
+      carriages << carriage
+      puts "Прицепили 1 вагон. Всего вагонов прицеплено: #{carriages.size}."
+    else
+      puts 'Не получилось прицепить вагон.' \
+           "Всего вагонов прицеплено: #{carriages.size}."
+    end
   end
 
   def detach_carriage
-    return @carriages = 0 if carriages.zero?
+    return puts impossible_attach_detach unless stopped?
 
-    @carriages -= 1 if speed.zero?
-    puts "Отцепили 1 вагон. Всего вагонов прицеплено: #{carriages}."
+    if carriages.pop
+      puts "Отцепили 1 вагон. Всего вагонов прицеплено: #{carriages.size}."
+    else
+      puts "Не получилось отцепить вагон. Всего вагонов прицеплено: #{carriages.size}."
+    end
   end
 
   def next_station
     return puts 'Следующая станция неизвестна, так как нет маршрута.' unless route.instance_of?(Route)
 
-    # Если поезд находится на конечной, то меняем маршрут в обратную сторону
-    route.list.reverse! if station == route.list.last
+    # Меняем маршрут в обратную сторону, если сейчас поезд на конечной
+    route.list.reverse if final_stop?
 
     current_station_index = route.list.index(station)
     @next_station = route.list[current_station_index + 1]
@@ -54,11 +64,23 @@ class Train
     stop
   end
 
+  def stop
+    @speed = 0
+  end
+
+  def stopped?
+    speed.zero?
+  end
+
+  def final_stop?
+    station == route.list.last
+  end
+
   protected
 
   # Метод вынесен в protected, потому что используется только
-  # методом go_next после прибытия на станцию и наследуется дочерним классам.
-  def stop
-    @speed = 0
+  # другими методами, является вспомогательным и наследуется дочерним классам.
+  def impossible_attach_detach
+    'Невозможно прицеплять и отцеплять вагоны, во время движения.'
   end
 end
