@@ -16,9 +16,15 @@ class Train
   attr_accessor :station, :previous_station, :route
   attr_reader :carriages, :speed
 
+  @@trains = []
+  def self.trains
+    @@trains
+  end
+
   def initialize
     @carriages = []
     @speed = 0
+    @@trains << self
   end
 
   def attach_carriage
@@ -34,6 +40,8 @@ class Train
   end
 
   def next_station
+    return puts 'Следующая станция неизвестна, так как нет маршрута.' unless route.instance_of?(Route)
+
     # Если поезд находится на конечной, то меняем маршрут в обратную сторону
     route.list.reverse! if station == route.list.last
 

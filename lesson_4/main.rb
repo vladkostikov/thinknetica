@@ -8,6 +8,15 @@
 # их в такую секцию. В комментарии к методу обосновать, почему он был вынесен в private/protected
 # 4. Вагоны теперь делятся на грузовые и пассажирские(отдельные классы).
 # К пассажирскому поезду можно прицепить только пассажирские, к грузовому - грузовые.
+#
+# Усложненное задание: создать программу в файле main.rb, которая будет позволять
+# пользователю через текстовый интерфейс делать следующее:
+# 1. Создавать станции
+# 2. Создавать поезда
+# 3. Прицеплять вагоны к поезду
+# 4. Отцеплять вагоны от поезда
+# 5. Помещать поезда на станцию
+# 6. Просматривать список станций и список поездов на станции
 require_relative './railway_station'
 require_relative './route'
 require_relative './passenger_train'
@@ -15,42 +24,130 @@ require_relative './cargo_train'
 require_relative './passenger_carriage'
 require_relative './cargo_carriage'
 
-# Создаём несколько станций, маршрут и поезд, чтобы посмотреть что всё работает правильно
-spb = RailwayStation.new('Санкт-Петербург')
-moscow = RailwayStation.new('Москва')
-voronezh = RailwayStation.new('Воронеж')
-rostov = RailwayStation.new('Ростов-на-Дону')
-krasnodar = RailwayStation.new('Краснодар')
-sochi = RailwayStation.new('Сочи')
+operations = {
+  create_station: '1. Создать станцию',
+  create_train: '2. Создать поезд',
+  attach_carriage: '3. Прицепить вагон к поезду',
+  detach_carriage: '4. Отцепить вагон от поезда',
+  move_train: '5. Поместить поезд на станцию',
+  show_stations: '6. Просмотреть список станций и список поездов на станции'
+}
 
-route_to_summer = Route.new
-route_to_summer.add_station(spb)
-route_to_summer.add_station(moscow)
-route_to_summer.add_station(voronezh)
-route_to_summer.add_station(rostov)
-route_to_summer.add_station(krasnodar)
-route_to_summer.add_station(sochi)
+def create_station
+  print 'Название станции: '
+  name = gets.chomp
 
-passenger_train = PassengerTrain.new
-passenger_train.route = route_to_summer
-
-moscow.receive_train(CargoTrain.new)
-spb.receive_train(passenger_train)
-
-15.times do
-  passenger_train.go_next
-  puts "\nПоезд прибыл на станцию: #{passenger_train.station.name}."
-  puts "Предыдущая станция: #{passenger_train.previous_station.name}. " \
-       "Следующая станция: #{passenger_train.next_station.name}."
-  passenger_train.attach_carriage(PassengerCarriage.new)
-  puts passenger_train.station.trains_info
+  station = RailwayStation.new(name)
+  puts "Станция #{station.name} создана."
 end
 
-5.times do
-  passenger_train.go_next
-  puts "\nПоезд прибыл на станцию: #{passenger_train.station.name}."
-  puts "Предыдущая станция: #{passenger_train.previous_station.name}. " \
-       "Следующая станция: #{passenger_train.next_station.name}."
-  passenger_train.detach_carriage
-  puts passenger_train.station.trains_info
+def create_train
+  user_choice_number = 0
+  until (1..2).include?(user_choice_number)
+    puts 'Какой поезд хотите создать?',
+         '1. Пассажирский',
+         '2. Грузовой'
+    user_choice_number = gets.to_i
+  end
+
+  train = PassengerTrain.new if user_choice_number == 1
+  train = CargoTrain.new if user_choice_number == 2
+  puts "Поезд #{train} создан."
+end
+
+def trains_info
+  trains = Train.trains
+
+  trains.each_with_index do |train, i|
+    puts "#{i + 1}. #{train}"
+  end
+end
+
+def attach_carriage
+  trains = Train.trains
+
+  user_choice_number = 0
+  until (1..trains.size).include?(user_choice_number)
+    puts 'К какому поезду хотите прицепить вагон?'
+    trains_info
+    user_choice_number = gets.to_i
+  end
+
+  train = trains[user_choice_number - 1]
+  train.attach_carriage(PassengerCarriage.new) if train.instance_of?(PassengerTrain)
+  train.attach_carriage(CargoCarriage.new) if train.instance_of?(CargoTrain)
+end
+
+def detach_carriage
+  trains = Train.trains
+
+  user_choice_number = 0
+  until (1..trains.size).include?(user_choice_number)
+    puts 'От какого поезда хотите отцепить вагон?'
+    trains_info
+    user_choice_number = gets.to_i
+  end
+
+  train = trains[user_choice_number - 1]
+  train.detach_carriage
+end
+
+def move_train
+  trains = Train.trains
+  stations = RailwayStation.stations
+
+  user_choice_number = 0
+  until (1..trains.size).include?(user_choice_number)
+    puts 'Какой поезд хотите переместить?'
+    trains_info
+
+    user_choice_number = gets.to_i
+  end
+  train = trains[user_choice_number - 1]
+
+  user_choice_number = 0
+  until (1..stations.size).include?(user_choice_number)
+    puts 'На какую станцию хотите переместить поезд?'
+    stations.each_with_index do |station, i|
+      puts "#{i + 1}. #{station.name}"
+    end
+
+    user_choice_number = gets.to_i
+  end
+  station = stations[user_choice_number - 1]
+
+  station.receive_train(train)
+  puts "Поезд #{train} перемещён на станцию #{station.name}."
+end
+
+def show_stations
+  stations = RailwayStation.stations
+
+  stations.each_with_index do |station, station_index|
+    puts "#{station_index + 1}. Станция #{station.name}"
+
+    station.trains.each_with_index do |train, train_index|
+      puts "\t#{train_index + 1}. #{train}"
+    end
+  end
+end
+
+PassengerTrain.new
+RailwayStation.new('Москва')
+
+loop do
+  user_choice_number = 0
+  until (1..operations.size).include?(user_choice_number)
+    puts "\nЧто хотите сделать?(0 для выхода)"
+    operations.each_value { |operation| puts operation }
+
+    user_input = gets.chomp
+    exit if user_input == '0'
+
+    user_choice_number = user_input.to_i
+  end
+
+  user_choice_operation = operations.to_a[user_choice_number - 1][0]
+
+  method(user_choice_operation).call
 end

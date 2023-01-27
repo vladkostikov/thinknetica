@@ -9,13 +9,20 @@
 class RailwayStation
   attr_reader :name, :trains
 
+  @@stations = []
+  def self.stations
+    @@stations
+  end
+
   def initialize(name)
     @name = name
     @trains = []
+    @@stations << self
   end
 
   def receive_train(train)
-    @trains << train
+    @trains << train unless @trains.include?(train)
+    train.previous_station = train.station
     train.station = self
   end
 

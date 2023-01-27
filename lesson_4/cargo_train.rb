@@ -4,6 +4,8 @@ require_relative './train'
 
 # Грузовой поезд
 class CargoTrain < Train
+  DEFAULT_SPEED = 80
+
   def attach_carriage(carriage)
     if carriage.instance_of?(CargoCarriage)
       carriages << carriage
@@ -20,8 +22,6 @@ class CargoTrain < Train
       puts "Отцепили 1 вагон. Всего вагонов прицеплено: #{carriages.size}."
     end
   end
-
-  DEFAULT_SPEED = 80
 
   def pick_up_speed
     @speed = DEFAULT_SPEED
