@@ -18,8 +18,11 @@ class PassengerTrain < Train
 
   def detach_carriage
     if speed.zero?
-      carriages.pop
-      puts "Отцепили 1 вагон. Всего вагонов прицеплено: #{carriages.size}."
+      if carriages.pop
+        puts "Отцепили 1 вагон. Всего вагонов прицеплено: #{carriages.size}."
+      else
+        puts "Не получилось отцепить вагон. Всего вагонов прицеплено: #{carriages.size}."
+      end
     end
   end
 
