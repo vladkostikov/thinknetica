@@ -4,6 +4,8 @@
 # Задание:
 # 1. Создать модуль, который позволит указывать название компании-производителя
 # и получать его. Подключить модуль к классам Вагон и Поезд.
+# 2. В классе RailwayStation создать метод класса all, который выводит
+# список всех станций, созданных на данный момент.
 require_relative './railway_station'
 require_relative './route'
 require_relative './passenger_train'
@@ -81,7 +83,7 @@ end
 
 def move_train
   trains = Train.trains
-  stations = RailwayStation.stations
+  stations = RailwayStation.all
 
   user_choice_number = 0
   until (1..trains.size).include?(user_choice_number)
@@ -108,7 +110,7 @@ def move_train
 end
 
 def show_stations
-  stations = RailwayStation.stations
+  stations = RailwayStation.all
 
   stations.each_with_index do |station, station_index|
     puts "#{station_index + 1}. Станция #{station.name}"
