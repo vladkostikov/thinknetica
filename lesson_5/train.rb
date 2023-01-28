@@ -7,9 +7,10 @@ class Train
   include Manufacturer
 
   attr_accessor :station, :previous_station, :route
-  attr_reader :carriages, :speed
+  attr_reader :carriages, :speed, :number
 
   @@trains = []
+
   def self.trains
     @@trains
   end
@@ -69,7 +70,17 @@ class Train
     station == route.list.last
   end
 
+  def change_number(number)
+    @number = number
+  end
+
+  def self.find(number)
+    trains.find { |train| train.number == number }
+  end
+
   protected
+
+  attr_writer :number
 
   # Метод вынесен в protected, потому что используется только
   # другими методами, является вспомогательным и наследуется дочерним классам.
