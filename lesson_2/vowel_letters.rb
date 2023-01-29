@@ -5,7 +5,7 @@
 vowels = {}
 
 # Гласные буквы
-letters = ['A', 'E', 'I', 'O', 'U']
+letters = %w[A E I O U]
 
 # Альфавит
 alphabet = 'A'..'Z'
