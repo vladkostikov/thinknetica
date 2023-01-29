@@ -6,6 +6,9 @@ require_relative '../modules/manufacturer'
 class Train
   include Manufacturer
 
+  # Формат номера: 3 буквы или цифры, необязательный дефис, 2 буквы или цифры
+  NUMBER_FORMAT = /^[А-ЯA-Z\d]{3}-?[А-ЯA-Z\d]{2}$/i.freeze
+
   attr_accessor :station, :previous_station, :route
   attr_reader :carriages, :speed, :number
 
@@ -15,7 +18,9 @@ class Train
     @@trains
   end
 
-  def initialize
+  def initialize(number)
+    @number = number.to_s
+    validate!
     @carriages = []
     @speed = 0
     @@trains << self
@@ -71,7 +76,7 @@ class Train
   end
 
   def change_number(number)
-    @number = number
+    @number = number.to_s
   end
 
   def self.find(number)
@@ -95,7 +100,10 @@ class Train
   end
 
   def validate!
-    raise 'У станции должно быть название' if name.nil?
-    raise 'Название должно состоять как минимум из 2 символов' if name.length < 2
+    raise 'У поезда должен быть номер' if number.nil? || number.size.zero?
+    raise 'Номер должен быть длиной 5 или 6 символов' if number.size != 5 && number.size != 6
+    raise 'Неправильный формат номера' if number !~ NUMBER_FORMAT
+
+    true
   end
 end

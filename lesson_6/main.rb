@@ -8,6 +8,9 @@
 # если объект невалидный, то должно выбрасываться исключение.
 # 1.2 Должен быть метод valid? который возвращает true, если объект валидный
 # и false - если объект невалидный.
+# 2. Релизовать проверку на формат номера поезда.
+# Допустимый формат: три буквы или цифры в любом порядке, необязательный дефис
+# и еще 2 буквы или цифры после дефиса.
 
 
 require_relative 'railway_station'
@@ -43,8 +46,13 @@ def create_train
     user_choice_number = gets.to_i
   end
 
-  train = PassengerTrain.new if user_choice_number == 1
-  train = CargoTrain.new if user_choice_number == 2
+  puts 'У поезда должен быть номер'
+  puts 'Формат номера: 3 буквы или цифры, необязательный дефис, 2 буквы или цифры'
+  print 'Введите номер поезда: '
+  number = gets.chomp
+
+  train = PassengerTrain.new(number) if user_choice_number == 1
+  train = CargoTrain.new(number) if user_choice_number == 2
   puts "Поезд #{train} создан."
 end
 
@@ -125,7 +133,7 @@ def show_stations
   end
 end
 
-PassengerTrain.new
+PassengerTrain.new('АМР-77')
 RailwayStation.new('Москва')
 
 loop do

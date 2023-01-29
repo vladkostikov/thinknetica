@@ -51,8 +51,8 @@ class RailwayStation
   protected
 
   def validate!
-    raise 'У станции должно быть название' if name.nil?
-    raise 'Название станции должно состоять как минимум из 2 символов' if name.length < 2
+    raise 'У станции должно быть название' if name.nil? || name.size.zero?
+    raise 'Название станции должно состоять как минимум из 2 символов' if name.size < 2
 
     true
   end
