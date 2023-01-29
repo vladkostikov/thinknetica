@@ -13,6 +13,9 @@
 # и еще 2 буквы или цифры после дефиса.
 # 3. Реализовать интерфейс, который бы выводил пользователю
 # ошибки валидации без прекращения работы программы.
+# 4. Убрать из классов все puts, кроме методов, которые и должны что-то
+# выводить на экран. Методы должны просто возвращать значения.
+# Начинаем бороться за чистоту кода.
 
 require_relative 'railway_station'
 require_relative 'route'
@@ -76,8 +79,8 @@ def attach_carriage
   end
 
   train = trains[user_choice_number - 1]
-  train.attach_carriage(PassengerCarriage.new) if train.instance_of?(PassengerTrain)
-  train.attach_carriage(CargoCarriage.new) if train.instance_of?(CargoTrain)
+  train.attach_carriage(PassengerCarriage.new) if train.is_a?(PassengerTrain)
+  train.attach_carriage(CargoCarriage.new) if train.is_a?(CargoTrain)
 end
 
 def detach_carriage
@@ -126,11 +129,8 @@ def show_stations
   stations = RailwayStation.all
 
   stations.each_with_index do |station, station_index|
-    puts "#{station_index + 1}. Станция #{station.name}"
-
-    station.trains.each_with_index do |train, train_index|
-      puts "\t#{train_index + 1}. #{train}"
-    end
+    puts "#{station_index + 1}. #{station.info}"
+    station.print_trains_info
   end
 end
 
@@ -152,6 +152,6 @@ loop do
   user_choice_operation = operations.to_a[user_choice_number - 1][0]
 
   method(user_choice_operation).call
-rescue StandardError => e
-  puts e
+rescue StandardError => error
+  puts error
 end

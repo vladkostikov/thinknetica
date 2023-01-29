@@ -31,15 +31,17 @@ class RailwayStation
     train.next_station.receive_train(train)
   end
 
-  def station_info
-    passenger_trains = 0
-    cargo_trains = 0
+  def info
+    passenger_trains = trains.count { |train| train.is_a?(PassengerTrain) }
+    cargo_trains = trains.count { |train| train.is_a?(CargoTrain) }
 
-    @trains.each do |train|
-      passenger_trains += 1 if train.instance_of?(PassengerTrain)
-      cargo_trains += 1 if train.instance_of?(CargoTrain)
-    end
     "Cтанция #{name}. Пассажирских поездов: #{passenger_trains}, грузовых поездов: #{cargo_trains}."
+  end
+
+  def print_trains_info
+    trains.each_with_index do |train, index|
+      puts "\t#{index + 1}. #{train}"
+    end
   end
 
   def valid?

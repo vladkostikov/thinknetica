@@ -26,30 +26,37 @@ class Train
     @@trains << self
   end
 
-  def attach_carriage(carriage)
-    return puts impossible_attach_detach unless stopped?
+  def permitted_type_carriage
+    Carriage
+  end
 
-    if carriage.instance_of?(Carriage)
+  def pick_up_speed
+    @speed = default_speed
+  end
+
+  def attach_carriage(carriage)
+    return puts print_impossible_attach_detach unless stopped?
+
+    if carriage.is_a?(permitted_type_carriage)
       carriages << carriage
-      puts "Прицепили 1 вагон. Всего вагонов прицеплено: #{carriages.size}."
+      print_successful_attach
     else
-      puts 'Не получилось прицепить вагон.' \
-           "Всего вагонов прицеплено: #{carriages.size}."
+      print_failed_attach
     end
   end
 
   def detach_carriage
-    return puts impossible_attach_detach unless stopped?
+    return print_impossible_attach_detach unless stopped?
 
     if carriages.pop
-      puts "Отцепили 1 вагон. Всего вагонов прицеплено: #{carriages.size}."
+      print_successful_detach
     else
-      puts "Не получилось отцепить вагон. Всего вагонов прицеплено: #{carriages.size}."
+      print_failed_detach
     end
   end
 
   def next_station
-    return puts 'Следующая станция неизвестна, так как нет маршрута.' unless route.instance_of?(Route)
+    return print_route_not_exist unless route.is_a?(Route)
 
     # Меняем маршрут в обратную сторону, если сейчас поезд на конечной
     route.list.reverse if final_stop?
@@ -95,8 +102,8 @@ class Train
 
   # Метод вынесен в protected, потому что используется только
   # другими методами, является вспомогательным и наследуется дочерним классам.
-  def impossible_attach_detach
-    'Невозможно прицеплять и отцеплять вагоны, во время движения.'
+  def print_impossible_attach_detach
+    puts 'Невозможно прицеплять и отцеплять вагоны, во время движения.'
   end
 
   def validate!
@@ -106,4 +113,34 @@ class Train
 
     true
   end
+
+  def default_speed
+    80
+  end
+
+  def total_carriages_attached
+    "Всего вагонов прицеплено: #{carriages.size}."
+  end
+
+  def print_successful_attach
+    puts "Прицепили 1 вагон. #{total_carriages_attached}"
+  end
+
+  def print_failed_attach
+    puts "Не получилось прицепить вагон. #{total_carriages_attached}"
+
+  end
+
+  def print_successful_detach
+    puts "Отцепили 1 вагон. #{total_carriages_attached}"
+  end
+
+  def print_failed_detach
+    puts "Не получилось отцепить вагон. #{total_carriages_attached}"
+  end
+
+  def print_route_not_exist
+    puts 'Отсутствует маршрут'
+  end
+
 end
