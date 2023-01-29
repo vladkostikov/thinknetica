@@ -11,7 +11,8 @@
 # 2. Релизовать проверку на формат номера поезда.
 # Допустимый формат: три буквы или цифры в любом порядке, необязательный дефис
 # и еще 2 буквы или цифры после дефиса.
-
+# 3. Реализовать интерфейс, который бы выводил пользователю
+# ошибки валидации без прекращения работы программы.
 
 require_relative 'railway_station'
 require_relative 'route'
@@ -151,4 +152,6 @@ loop do
   user_choice_operation = operations.to_a[user_choice_number - 1][0]
 
   method(user_choice_operation).call
+rescue StandardError => e
+  puts e
 end
