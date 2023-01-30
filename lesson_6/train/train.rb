@@ -26,23 +26,24 @@ class Train
     Carriage
   end
 
+  def attachable_carriage?(carriage)
+    carriage.is_a?(permitted_type_carriage)
+  end
+
   def pick_up_speed
     @speed = default_speed
   end
 
   def attach_carriage(carriage)
-    return print_impossible_attach_detach unless stopped?
+    raise impossible_attach_detach unless stopped?
+    raise failed_attach unless attachable_carriage?
 
-    if carriage.is_a?(permitted_type_carriage)
-      carriages << carriage
-      print_successful_attach
-    else
-      print_failed_attach
-    end
+    carriages << carriage
+    print_successful_attach
   end
 
   def detach_carriage
-    return print_impossible_attach_detach unless stopped?
+    raise impossible_attach_detach unless stopped?
 
     if carriages.pop
       print_successful_detach
@@ -98,8 +99,8 @@ class Train
 
   # Метод вынесен в protected, потому что используется только
   # другими методами, является вспомогательным и наследуется дочерним классам.
-  def print_impossible_attach_detach
-    puts 'Невозможно прицеплять и отцеплять вагоны, во время движения.'
+  def impossible_attach_detach
+    'Невозможно прицеплять и отцеплять вагоны, во время движения.'
   end
 
   def validate!
@@ -122,8 +123,8 @@ class Train
     puts "Прицепили 1 вагон. #{total_carriages_attached}"
   end
 
-  def print_failed_attach
-    puts "Не получилось прицепить вагон. #{total_carriages_attached}"
+  def failed_attach
+    "Не получилось прицепить вагон. #{total_carriages_attached}"
   end
 
   def print_successful_detach
