@@ -16,7 +16,7 @@ module Interface
       attach_carriage: '3. Прицепить вагон к поезду',
       detach_carriage: '4. Отцепить вагон от поезда',
       move_train: '5. Поместить поезд на станцию',
-      show_stations_with_trains: '6. Просмотреть список станций и список поездов на станции'
+      print_stations_with_trains: '6. Посмотреть список станций и список поездов на станции'
     }
   end
 
@@ -78,6 +78,7 @@ module Interface
   end
 
   def print_trains
+    raise 'Нет поездов' if trains.empty?
     trains.each_with_index do |train, i|
       puts "#{i + 1}. #{train}"
     end
@@ -111,13 +112,18 @@ module Interface
     RailwayStation.all
   end
 
+  def print_stations
+    raise 'Нет станций' if stations.empty?
+    stations.each_with_index do |station, i|
+      puts "#{i + 1}. #{station.name}"
+    end
+  end
+
   # Возвращает станцию
   def ask_station
     user_choice_number = nil
     until (1..stations.size).include?(user_choice_number)
-      stations.each_with_index do |station, i|
-        puts "#{i + 1}. #{station.name}"
-      end
+      print_stations
       user_choice_number = gets.to_i
     end
 
@@ -134,7 +140,8 @@ module Interface
     puts "Поезд #{train} перемещён на станцию #{station.name}."
   end
 
-  def show_stations_with_trains
+  def print_stations_with_trains
+    raise 'Нет станций' if stations.empty?
     stations.each_with_index do |station, station_index|
       puts "#{station_index + 1}. #{station.info}"
       station.print_trains_info
@@ -150,7 +157,7 @@ module Interface
   end
 
   # Возвращает выбор пользователя
-  def select_menu_operation
+  def ask_menu_operation
     user_choice_number = nil
     until (1..operations.size).include?(user_choice_number)
       puts "\nЧто хотите сделать?(0 для выхода)"
@@ -164,7 +171,7 @@ module Interface
   end
 
   def app
-    method(select_menu_operation).call
+    method(ask_menu_operation).call
   rescue StandardError => e
     puts e
   end
