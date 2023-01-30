@@ -24,14 +24,23 @@ require_relative 'train/cargo_train'
 require_relative 'carriage/passenger_carriage'
 require_relative 'carriage/cargo_carriage'
 
-operations = {
-  create_station: '1. Создать станцию',
-  create_train: '2. Создать поезд',
-  attach_carriage: '3. Прицепить вагон к поезду',
-  detach_carriage: '4. Отцепить вагон от поезда',
-  move_train: '5. Поместить поезд на станцию',
-  show_stations: '6. Просмотреть список станций и список поездов на станции'
-}
+def operations
+  {
+    create_station: '1. Создать станцию',
+    create_train: '2. Создать поезд',
+    attach_carriage: '3. Прицепить вагон к поезду',
+    detach_carriage: '4. Отцепить вагон от поезда',
+    move_train: '5. Поместить поезд на станцию',
+    show_stations_with_trains: '6. Просмотреть список станций и список поездов на станции'
+  }
+end
+
+def types_of_trains
+  {
+    PassengerTrain => 'Пассажирский',
+    CargoTrain => 'Грузовой'
+  }
+end
 
 def create_station
   print 'Название станции: '
@@ -42,120 +51,139 @@ def create_station
 end
 
 def create_train
-  user_choice_number = 0
-  until (1..2).include?(user_choice_number)
-    puts 'Какой поезд хотите создать?',
-         '1. Пассажирский',
-         '2. Грузовой'
-    user_choice_number = gets.to_i
+  type_of_train = ask_type_of_train
+
+  begin
+    number = ask_number_of_train
+    train = type_of_train.new(number)
+  rescue StandardError => e
+    puts "#{e}\n"
+    retry
   end
 
-  puts 'У поезда должен быть номер'
-  puts 'Формат номера: 3 буквы или цифры, необязательный дефис, 2 буквы или цифры'
-  print 'Введите номер поезда: '
-  number = gets.chomp
-
-  train = PassengerTrain.new(number) if user_choice_number == 1
-  train = CargoTrain.new(number) if user_choice_number == 2
   puts "Поезд #{train} создан."
 end
 
-def trains_info
-  trains = all_trains
+# Возвращает Class выбранного поезда
+def ask_type_of_train
+  user_choice_number = nil
+  until (1..types_of_trains.size).include?(user_choice_number)
+    puts 'Какой поезд хотите создать?'
+    print_types_of_trains
+    user_choice_number = gets.to_i
+  end
+  index_of_type = user_choice_number - 1
 
+  types_of_trains.to_a[index_of_type][0]
+end
+
+def print_types_of_trains
+  types_of_trains.each_with_index do |(_type, type_in_russian), index|
+    puts "#{index + 1}. #{type_in_russian}"
+  end
+end
+
+# Возвращает номер поезда
+def ask_number_of_train
+  puts 'У поезда должен быть номер'
+  puts 'Формат номера: 5 букв или цифр в любом порядке, после 3 символа '\
+       'может быть дефис(необязательно)'
+  print 'Введите номер поезда: '
+  gets.chomp
+end
+
+def print_trains
   trains.each_with_index do |train, i|
     puts "#{i + 1}. #{train}"
   end
 end
 
-def attach_carriage
-  trains = all_trains
-
-  user_choice_number = 0
+# Возвращает поезд
+def ask_train
+  user_choice_number = nil
   until (1..trains.size).include?(user_choice_number)
-    puts 'К какому поезду хотите прицепить вагон?'
-    trains_info
+    print_trains
     user_choice_number = gets.to_i
   end
+  trains[user_choice_number - 1]
+end
 
-  train = trains[user_choice_number - 1]
+def attach_carriage
+  puts 'К какому поезду хотите прицепить вагон?'
+  train = ask_train
+
   train.attach_carriage(PassengerCarriage.new) if train.is_a?(PassengerTrain)
   train.attach_carriage(CargoCarriage.new) if train.is_a?(CargoTrain)
 end
 
 def detach_carriage
-  trains = all_trains
-
-  user_choice_number = 0
-  until (1..trains.size).include?(user_choice_number)
-    puts 'От какого поезда хотите отцепить вагон?'
-    trains_info
-    user_choice_number = gets.to_i
-  end
-
-  train = trains[user_choice_number - 1]
+  puts 'От какого поезда хотите отцепить вагон?'
+  train = ask_train
   train.detach_carriage
 end
 
-def move_train
-  trains = all_trains
-  stations = RailwayStation.all
+def stations
+  RailwayStation.all
+end
 
-  user_choice_number = 0
-  until (1..trains.size).include?(user_choice_number)
-    puts 'Какой поезд хотите переместить?'
-    trains_info
-
-    user_choice_number = gets.to_i
-  end
-  train = trains[user_choice_number - 1]
-
-  user_choice_number = 0
+# Возвращает станцию
+def ask_station
+  user_choice_number = nil
   until (1..stations.size).include?(user_choice_number)
-    puts 'На какую станцию хотите переместить поезд?'
     stations.each_with_index do |station, i|
       puts "#{i + 1}. #{station.name}"
     end
-
     user_choice_number = gets.to_i
   end
-  station = stations[user_choice_number - 1]
+
+  stations[user_choice_number - 1]
+end
+
+def move_train
+  puts 'Какой поезд хотите переместить?'
+  train = ask_train
+  puts 'На какую станцию хотите переместить поезд?'
+  station = ask_station
 
   station.receive_train(train)
   puts "Поезд #{train} перемещён на станцию #{station.name}."
 end
 
-def show_stations
-  stations = RailwayStation.all
-
+def show_stations_with_trains
   stations.each_with_index do |station, station_index|
     puts "#{station_index + 1}. #{station.info}"
     station.print_trains_info
   end
 end
 
-def all_trains
+def trains
   CargoTrain.all + PassengerTrain.all
 end
 
-PassengerTrain.new('АМР-77')
-RailwayStation.new('Москва')
+def print_menu
+  operations.each_value { |operation| puts operation }
+end
 
-loop do
-  user_choice_number = 0
+# Возвращает выбор пользователя
+def select_menu_operation
+  user_choice_number = nil
   until (1..operations.size).include?(user_choice_number)
     puts "\nЧто хотите сделать?(0 для выхода)"
-    operations.each_value { |operation| puts operation }
-
+    print_menu
     user_input = gets.chomp
     exit if user_input == '0'
 
     user_choice_number = user_input.to_i
   end
+  operations.to_a[user_choice_number - 1][0]
+end
 
-  user_choice_operation = operations.to_a[user_choice_number - 1][0]
-
-  method(user_choice_operation).call
+def app
+  method(select_menu_operation).call
 rescue StandardError => e
   puts e
+end
+
+loop do
+  app
 end
