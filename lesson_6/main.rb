@@ -26,6 +26,4 @@ require_relative 'modules/interface'
 
 include Interface
 
-loop do
-  app
-end
+run_interface

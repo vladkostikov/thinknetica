@@ -79,6 +79,7 @@ module Interface
 
   def print_trains
     raise 'Нет поездов' if trains.empty?
+
     trains.each_with_index do |train, i|
       puts "#{i + 1}. #{train}"
     end
@@ -114,6 +115,7 @@ module Interface
 
   def print_stations
     raise 'Нет станций' if stations.empty?
+
     stations.each_with_index do |station, i|
       puts "#{i + 1}. #{station.name}"
     end
@@ -142,6 +144,7 @@ module Interface
 
   def print_stations_with_trains
     raise 'Нет станций' if stations.empty?
+
     stations.each_with_index do |station, station_index|
       puts "#{station_index + 1}. #{station.info}"
       station.print_trains_info
@@ -174,5 +177,11 @@ module Interface
     method(ask_menu_operation).call
   rescue StandardError => e
     puts e
+  end
+
+  def run_interface
+    loop do
+      app
+    end
   end
 end

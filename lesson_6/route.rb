@@ -2,28 +2,28 @@
 
 # Маршрут
 class Route
-  attr_reader :list
+  attr_reader :stations
 
   def initialize
-    @list = []
+    @stations = []
   end
 
   def add_station(station)
     raise impossible_add_station unless station.is_a?(RailwayStation)
 
-    @list << station
+    @stations << station
   end
 
   def delete_station(station)
-    list.delete(station)
+    stations.delete(station)
   end
 
   def first_station
-    @first_station = list.first
+    @first_station = stations.first
   end
 
   def last_station
-    @last_station = list.last
+    @last_station = stations.last
   end
 
   private
