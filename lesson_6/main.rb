@@ -61,7 +61,7 @@ def create_train
 end
 
 def trains_info
-  trains = Train.trains
+  trains = all_trains
 
   trains.each_with_index do |train, i|
     puts "#{i + 1}. #{train}"
@@ -69,7 +69,7 @@ def trains_info
 end
 
 def attach_carriage
-  trains = Train.trains
+  trains = all_trains
 
   user_choice_number = 0
   until (1..trains.size).include?(user_choice_number)
@@ -84,7 +84,7 @@ def attach_carriage
 end
 
 def detach_carriage
-  trains = Train.trains
+  trains = all_trains
 
   user_choice_number = 0
   until (1..trains.size).include?(user_choice_number)
@@ -98,7 +98,7 @@ def detach_carriage
 end
 
 def move_train
-  trains = Train.trains
+  trains = all_trains
   stations = RailwayStation.all
 
   user_choice_number = 0
@@ -134,6 +134,10 @@ def show_stations
   end
 end
 
+def all_trains
+  CargoTrain.all + PassengerTrain.all
+end
+
 PassengerTrain.new('АМР-77')
 RailwayStation.new('Москва')
 
@@ -152,6 +156,6 @@ loop do
   user_choice_operation = operations.to_a[user_choice_number - 1][0]
 
   method(user_choice_operation).call
-rescue StandardError => error
-  puts error
+rescue StandardError => e
+  puts e
 end

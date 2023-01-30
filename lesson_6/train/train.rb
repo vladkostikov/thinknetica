@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 require_relative '../modules/manufacturer'
+require_relative '../modules/instances'
 
 # Поезд
 class Train
   include Manufacturer
+  include Instances
 
   # Формат номера: 3 буквы или цифры, необязательный дефис, 2 буквы или цифры
   NUMBER_FORMAT = /^[А-ЯA-Z\d]{3}-?[А-ЯA-Z\d]{2}$/i.freeze
@@ -12,18 +14,12 @@ class Train
   attr_accessor :station, :previous_station, :route
   attr_reader :carriages, :speed, :number
 
-  @@trains = []
-
-  def self.trains
-    @@trains
-  end
-
   def initialize(number)
     @number = number.to_s
     validate!
     @carriages = []
     @speed = 0
-    @@trains << self
+    register_instance
   end
 
   def permitted_type_carriage
@@ -35,7 +31,7 @@ class Train
   end
 
   def attach_carriage(carriage)
-    return puts print_impossible_attach_detach unless stopped?
+    return print_impossible_attach_detach unless stopped?
 
     if carriage.is_a?(permitted_type_carriage)
       carriages << carriage
@@ -87,7 +83,7 @@ class Train
   end
 
   def self.find(number)
-    trains.find { |train| train.number == number }
+    all.find { |train| train.number == number }
   end
 
   def valid?
@@ -128,7 +124,6 @@ class Train
 
   def print_failed_attach
     puts "Не получилось прицепить вагон. #{total_carriages_attached}"
-
   end
 
   def print_successful_detach
@@ -142,5 +137,4 @@ class Train
   def print_route_not_exist
     puts 'Отсутствует маршрут'
   end
-
 end

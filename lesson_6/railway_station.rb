@@ -1,20 +1,18 @@
 # frozen_string_literal: true
 
+require_relative 'modules/instances'
+
 # Железнодорожная станция
 class RailwayStation
+  include Instances
+
   attr_reader :name, :trains
-
-  @@stations = []
-
-  def self.all
-    @@stations
-  end
 
   def initialize(name)
     @name = name.to_s
     validate!
     @trains = []
-    @@stations << self
+    register_instance
   end
 
   def receive_train(train)
