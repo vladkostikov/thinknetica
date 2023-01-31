@@ -53,7 +53,7 @@ class Train
     return puts 'Следующая станция неизвестна, так как нет маршрута.' unless route.instance_of?(Route)
 
     # Меняем маршрут в обратную сторону, если сейчас поезд на конечной
-    route.list.reverse if final_stop?
+    route.list.reverse! if final_stop?
 
     current_station_index = route.list.index(station)
     @next_station = route.list[current_station_index + 1]

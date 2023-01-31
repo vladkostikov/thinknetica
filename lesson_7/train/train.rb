@@ -56,7 +56,7 @@ class Train
     return print_route_not_exist unless route.is_a?(Route)
 
     # Меняем маршрут в обратную сторону, если сейчас поезд на конечной
-    route.stations.reverse if final_stop?
+    route.stations.reverse! if final_stop?
 
     current_station_index = route.stations.index(station)
     @next_station = route.stations[current_station_index + 1]
