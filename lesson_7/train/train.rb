@@ -93,6 +93,12 @@ class Train
     false
   end
 
+  def each_carriage
+    carriages.each do |carriage|
+      yield(carriage)
+    end
+  end
+
   protected
 
   attr_writer :number
