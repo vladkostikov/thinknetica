@@ -36,7 +36,7 @@ class Train
 
   def attach_carriage(carriage)
     raise impossible_attach_detach unless stopped?
-    raise failed_attach unless attachable_carriage?
+    raise failed_attach unless attachable_carriage?(carriage)
 
     carriages << carriage
     print_successful_attach
