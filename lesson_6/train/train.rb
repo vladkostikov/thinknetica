@@ -107,6 +107,8 @@ class Train
     raise 'У поезда должен быть номер' if number.nil? || number.size.zero?
     raise 'Номер должен быть длиной 5 или 6 символов' if number.size != 5 && number.size != 6
     raise 'Неправильный формат номера' if number !~ NUMBER_FORMAT
+    raise 'Поезд с таким номером уже существует' if
+      Train.find(number) || CargoTrain.find(number) || PassengerTrain.find(number)
 
     true
   end
