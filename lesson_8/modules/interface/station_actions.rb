@@ -2,6 +2,7 @@
 
 require_relative '../../railway_station'
 
+# Действия со станциями
 module StationActions
   def create_station
     print 'Название станции: '

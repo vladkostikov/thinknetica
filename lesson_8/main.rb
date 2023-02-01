@@ -9,4 +9,4 @@ require_relative 'modules/interface/interface'
 
 include Interface
 
-run_interface
+Interface.start

@@ -22,10 +22,6 @@ module Interface
     }
   end
 
-  def print_menu
-    operations.each_value { |operation| puts operation }
-  end
-
   # Возвращает выбор пользователя
   def ask_menu_operation
     user_choice_number = nil
@@ -40,13 +36,17 @@ module Interface
     operations.to_a[user_choice_number - 1][0]
   end
 
+  def print_menu
+    operations.each_value { |operation| puts operation }
+  end
+
   def app
     method(ask_menu_operation).call
   rescue StandardError => e
     puts e
   end
 
-  def run_interface
+  def start
     loop do
       app
     end

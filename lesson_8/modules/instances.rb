@@ -7,6 +7,7 @@ module Instances
     base.send :include, InstanceMethods
   end
 
+  # Методы класса
   module ClassMethods
     def all
       instances
@@ -22,6 +23,7 @@ module Instances
     end
   end
 
+  # Методы инстанса
   module InstanceMethods
     private
 

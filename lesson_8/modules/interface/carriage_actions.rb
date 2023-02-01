@@ -3,6 +3,7 @@
 require_relative '../../carriage/passenger_carriage'
 require_relative '../../carriage/cargo_carriage'
 
+# Действия с вагонами
 module CarriageActions
   def attach_carriage
     puts 'К какому поезду хотите прицепить вагон?'

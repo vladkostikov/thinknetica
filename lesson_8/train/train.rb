@@ -8,11 +8,25 @@ class Train
   include Manufacturer
   include Instances
 
-  # Формат номера: 3 буквы или цифры, необязательный дефис, 2 буквы или цифры
+  # Формат номера: 5 букв или цифр в любом порядке,
+  # после 3 символа может быть дефис (необязательно)
   NUMBER_FORMAT = /^[А-ЯA-Z\d]{3}-?[А-ЯA-Z\d]{2}$/i.freeze
+  FAILED_ATTACH = 'Не получилось прицепить вагон.'\
+                  'Вагон такого типа нельзя прицеплять к этому поезду.'
+  IMPOSSIBLE_ATTACH_DETACH = 'Невозможно прицеплять и отцеплять вагоны во время движения.'
+  DEFAULT_SPEED = 80
 
   attr_accessor :station, :previous_station, :route
   attr_reader :carriages, :speed, :number
+
+  def self.find(number)
+    all.find { |train| train.number == number }
+  end
+
+  def self.find_in_all_subclasses(number)
+    Train.all.concat(PassengerTrain.all,
+                     CargoTrain.all).find { |train| train.number == number }
+  end
 
   def initialize(number)
     @number = number.to_s
@@ -31,19 +45,19 @@ class Train
   end
 
   def pick_up_speed
-    @speed = default_speed
+    @speed = DEFAULT_SPEED
   end
 
   def attach_carriage(carriage)
-    raise impossible_attach_detach unless stopped?
-    raise failed_attach unless attachable_carriage?(carriage)
+    raise IMPOSSIBLE_ATTACH_DETACH unless stopped?
+    raise FAILED_ATTACH unless attachable_carriage?(carriage)
 
     carriages << carriage
     print_successful_attach
   end
 
   def detach_carriage
-    raise impossible_attach_detach unless stopped?
+    raise IMPOSSIBLE_ATTACH_DETACH unless stopped?
 
     if carriages.pop
       print_successful_detach
@@ -83,44 +97,27 @@ class Train
     @number = number.to_s
   end
 
-  def self.find(number)
-    all.find { |train| train.number == number }
-  end
-
   def valid?
     validate!
   rescue StandardError
     false
   end
 
-  def each_carriage
-    carriages.each do |carriage|
-      yield(carriage)
-    end
+  def each_carriage(&block)
+    carriages.each(&block)
   end
 
   protected
 
   attr_writer :number
 
-  # Метод вынесен в protected, потому что используется только
-  # другими методами, является вспомогательным и наследуется дочерним классам.
-  def impossible_attach_detach
-    'Невозможно прицеплять и отцеплять вагоны, во время движения.'
-  end
-
   def validate!
-    raise 'У поезда должен быть номер' if number.nil? || number.size.zero?
-    raise 'Номер должен быть длиной 5 или 6 символов' if number.size != 5 && number.size != 6
+    raise 'У поезда должен быть номер' if number.nil? || number.empty?
+    raise 'Номер должен быть длиной 5 или 6 символов' unless (5..6).include?(number.size)
     raise 'Неправильный формат номера' if number !~ NUMBER_FORMAT
-    raise 'Поезд с таким номером уже существует' if
-      Train.find(number) || CargoTrain.find(number) || PassengerTrain.find(number)
+    raise 'Поезд с таким номером уже существует' if Train.find_in_all_subclasses(number)
 
     true
-  end
-
-  def default_speed
-    80
   end
 
   def total_carriages_attached
@@ -129,10 +126,6 @@ class Train
 
   def print_successful_attach
     puts "Прицепили 1 вагон. #{total_carriages_attached}"
-  end
-
-  def failed_attach
-    "Не получилось прицепить вагон. #{total_carriages_attached}"
   end
 
   def print_successful_detach

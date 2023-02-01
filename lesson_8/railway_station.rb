@@ -48,16 +48,14 @@ class RailwayStation
     false
   end
 
-  def each_train
-    trains.each do |train|
-      yield(train)
-    end
+  def each_train(&block)
+    trains.each(&block)
   end
 
   protected
 
   def validate!
-    raise 'У станции должно быть название' if name.nil? || name.size.zero?
+    raise 'У станции должно быть название' if name.nil? || name.empty?
     raise 'Название станции должно состоять как минимум из 2 символов' if name.size < 2
 
     true

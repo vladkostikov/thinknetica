@@ -3,6 +3,7 @@
 require_relative '../../train/passenger_train'
 require_relative '../../train/cargo_train'
 
+# Действия с поездами
 module TrainActions
   def types_of_trains
     {
@@ -45,9 +46,8 @@ module TrainActions
   end
 
   def ask_number_of_train
-    puts 'У поезда должен быть номер'
     puts 'Формат номера: 5 букв или цифр в любом порядке, после 3 символа '\
-       'может быть дефис(необязательно)'
+       'может быть дефис (необязательно)'
     print 'Введите номер поезда: '
     gets.chomp
   end
