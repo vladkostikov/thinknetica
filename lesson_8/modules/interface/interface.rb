@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../railway_station'
+require_relative 'station_actions'
 require_relative '../../route'
 require_relative '../../train/passenger_train'
 require_relative '../../train/cargo_train'
@@ -9,6 +9,8 @@ require_relative '../../carriage/cargo_carriage'
 
 # Текстовый интерфейс программы
 module Interface
+  include StationActions
+
   def operations
     {
       create_station: '1. Создать станцию',
@@ -25,14 +27,6 @@ module Interface
       PassengerTrain => 'Пассажирский',
       CargoTrain => 'Грузовой'
     }
-  end
-
-  def create_station
-    print 'Название станции: '
-    name = gets.chomp
-
-    station = RailwayStation.new(name)
-    puts "Станция #{station.name} создана."
   end
 
   def create_train
@@ -109,29 +103,6 @@ module Interface
     train.detach_carriage
   end
 
-  def stations
-    RailwayStation.all
-  end
-
-  def print_stations
-    raise 'Нет станций' if stations.empty?
-
-    stations.each_with_index do |station, i|
-      puts "#{i + 1}. #{station.name}"
-    end
-  end
-
-  # Возвращает станцию
-  def ask_station
-    user_choice_number = nil
-    until (1..stations.size).include?(user_choice_number)
-      print_stations
-      user_choice_number = gets.to_i
-    end
-
-    stations[user_choice_number - 1]
-  end
-
   def move_train
     puts 'Какой поезд хотите переместить?'
     train = ask_train
@@ -140,15 +111,6 @@ module Interface
 
     station.receive_train(train)
     puts "Поезд #{train} перемещён на станцию #{station.name}."
-  end
-
-  def print_stations_with_trains
-    raise 'Нет станций' if stations.empty?
-
-    stations.each_with_index do |station, station_index|
-      puts "#{station_index + 1}. #{station.info}"
-      station.print_trains_info
-    end
   end
 
   def trains
