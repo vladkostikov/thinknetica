@@ -2,14 +2,14 @@
 
 require_relative 'station_actions'
 require_relative 'train_actions'
+require_relative 'carriage_actions'
 require_relative '../../route'
-require_relative '../../carriage/passenger_carriage'
-require_relative '../../carriage/cargo_carriage'
 
 # Текстовый интерфейс программы
 module Interface
   include StationActions
   include TrainActions
+  include CarriageActions
 
   def operations
     {
@@ -20,20 +20,6 @@ module Interface
       move_train: '5. Поместить поезд на станцию',
       print_stations_with_trains: '6. Посмотреть список станций и список поездов на станции'
     }
-  end
-
-  def attach_carriage
-    puts 'К какому поезду хотите прицепить вагон?'
-    train = ask_train
-
-    train.attach_carriage(PassengerCarriage.new) if train.is_a?(PassengerTrain)
-    train.attach_carriage(CargoCarriage.new) if train.is_a?(CargoTrain)
-  end
-
-  def detach_carriage
-    puts 'От какого поезда хотите отцепить вагон?'
-    train = ask_train
-    train.detach_carriage
   end
 
   def print_menu
