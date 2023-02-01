@@ -23,11 +23,6 @@ class Train
     all.find { |train| train.number == number }
   end
 
-  def self.find_in_all_subclasses(number)
-    Train.all.concat(PassengerTrain.all,
-                     CargoTrain.all).find { |train| train.number == number }
-  end
-
   def initialize(number)
     @number = number.to_s
     validate!
@@ -115,9 +110,17 @@ class Train
     raise 'У поезда должен быть номер' if number.nil? || number.empty?
     raise 'Номер должен быть длиной 5 или 6 символов' unless (5..6).include?(number.size)
     raise 'Неправильный формат номера' if number !~ NUMBER_FORMAT
-    raise 'Поезд с таким номером уже существует' if Train.find_in_all_subclasses(number)
+    raise 'Поезд с таким номером уже существует' if Train.find(number)
 
     true
+  end
+
+  def register_instance
+    self.class.add_instance(self)
+
+    # Добавляем инстансы в класс Train, чтобы он содержал не только свои инстансы,
+    # но и инстансы подклассов
+    Train.add_instance(self) unless instance_of?(Train)
   end
 
   def total_carriages_attached

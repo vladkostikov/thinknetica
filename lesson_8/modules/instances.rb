@@ -9,13 +9,11 @@ module Instances
 
   # Методы класса
   module ClassMethods
-    def all
-      instances
-    end
-
     def instances
       @instances ||= []
     end
+
+    alias all instances
 
     def add_instance(instance)
       instances # вызываем чтобы установить начальное значение @instances = []
