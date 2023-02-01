@@ -5,7 +5,7 @@
 # где это возможно.
 # 2. Исправить все ошибки (кроме отсутствия документации), которые выдаст rubocop.
 
-require_relative 'modules/interface/interface'
+require_relative 'modules/interface'
 
 include Interface
 
