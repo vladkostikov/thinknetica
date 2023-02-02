@@ -21,8 +21,8 @@ class Train
   DEFAULT_SPEED = 80
 
   strong_attr_accessor :station, RailwayStation
-  strong_attr_accessor :previous_station, RailwayStation
   strong_attr_accessor :route, Route
+  attr_accessor :previous_station
   attr_reader :carriages, :speed, :number
 
   def self.find(number)

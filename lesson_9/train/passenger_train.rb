@@ -13,6 +13,10 @@ class PassengerTrain < Train
     PassengerCarriage
   end
 
+  def to_s
+    "Пассажирский поезд с номером: #{number}. #{total_carriages_attached}"
+  end
+
   private
 
   def print_failed_attach

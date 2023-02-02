@@ -28,7 +28,7 @@ module TrainActions
       retry
     end
 
-    puts "Поезд #{train} создан."
+    puts 'Поезд успешно создан.', train
   end
 
   # Возвращает Class выбранного поезда
@@ -82,7 +82,7 @@ module TrainActions
     station = ask_station
 
     station.receive_train(train)
-    puts "Поезд #{train} перемещён на станцию #{station.name}."
+    puts "Поезд успешно перемещён на станцию #{station.name}."
   end
 
   def trains
