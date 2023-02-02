@@ -4,6 +4,9 @@ require_relative 'train'
 
 # Грузовой поезд
 class CargoTrain < Train
+  validate :number, :presence
+  validate :number, :format, NUMBER_FORMAT
+
   def permitted_type_carriage
     CargoCarriage
   end

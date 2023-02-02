@@ -17,9 +17,14 @@ module TrainActions
 
     begin
       number = ask_number_of_train
+      raise NameError if Train.find(number)
+
       train = type_of_train.new(number)
-    rescue StandardError => e
-      puts "#{e}\n"
+    rescue NameError
+      puts 'Поезд с таким номером уже существует'
+      retry
+    rescue StandardError
+      puts 'Неправильный формат номера'
       retry
     end
 
@@ -46,7 +51,7 @@ module TrainActions
   end
 
   def ask_number_of_train
-    puts 'Формат номера: 5 букв или цифр в любом порядке, после 3 символа '\
+    puts "\nФормат номера: 5 букв или цифр в любом порядке, после 3 символа "\
        'может быть дефис (необязательно)'
     print 'Введите номер поезда: '
     gets.chomp

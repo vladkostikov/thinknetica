@@ -3,17 +3,19 @@
 require_relative '../modules/manufacturer'
 require_relative '../modules/instances'
 require_relative '../modules/accessors'
+require_relative '../modules/validation'
 
 # Поезд
 class Train
   include Manufacturer
   include Instances
   include Accessors
+  include Validation
 
   # Формат номера: 5 букв или цифр в любом порядке,
   # после 3 символа может быть дефис (необязательно)
   NUMBER_FORMAT = /^[А-ЯA-Z\d]{3}-?[А-ЯA-Z\d]{2}$/i.freeze
-  FAILED_ATTACH = 'Не получилось прицепить вагон.'\
+  FAILED_ATTACH = 'Не получилось прицепить вагон. '\
                   'Вагон такого типа нельзя прицеплять к этому поезду.'
   IMPOSSIBLE_ATTACH_DETACH = 'Невозможно прицеплять и отцеплять вагоны во время движения.'
   DEFAULT_SPEED = 80
@@ -28,7 +30,7 @@ class Train
   end
 
   def initialize(number)
-    @number = number.to_s
+    @number = number.to_s.strip
     validate!
     @carriages = []
     @speed = 0
@@ -96,12 +98,6 @@ class Train
     @number = number.to_s
   end
 
-  def valid?
-    validate!
-  rescue StandardError
-    false
-  end
-
   def each_carriage(&block)
     carriages.each(&block)
   end
@@ -109,15 +105,6 @@ class Train
   protected
 
   attr_writer :number
-
-  def validate!
-    raise 'У поезда должен быть номер' if number.nil? || number.empty?
-    raise 'Номер должен быть длиной 5 или 6 символов' unless (5..6).include?(number.size)
-    raise 'Неправильный формат номера' if number !~ NUMBER_FORMAT
-    raise 'Поезд с таким номером уже существует' if Train.find(number)
-
-    true
-  end
 
   def register_instance
     self.class.add_instance(self)

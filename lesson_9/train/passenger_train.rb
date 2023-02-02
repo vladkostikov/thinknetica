@@ -6,6 +6,9 @@ require_relative 'train'
 class PassengerTrain < Train
   DEFAULT_SPEED = 150
 
+  validate :number, :presence
+  validate :number, :format, NUMBER_FORMAT
+
   def permitted_type_carriage
     PassengerCarriage
   end
