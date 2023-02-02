@@ -24,7 +24,7 @@ module Validation
     end
 
     def validate_format(value, format)
-      raise 'Invalid format' if value.to_s !~ format
+      raise 'Invalid format' if value.to_s.strip !~ format
     end
 
     def validate_type(value, type)

@@ -10,6 +10,9 @@ module StationActions
 
     station = RailwayStation.new(name)
     puts "Станция #{station.name} создана."
+  rescue StandardError
+    puts 'Название станции должно состоять как минимум из 2 символов'
+    retry
   end
 
   def stations

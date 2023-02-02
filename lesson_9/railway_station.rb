@@ -1,15 +1,22 @@
 # frozen_string_literal: true
 
 require_relative 'modules/instances'
+require_relative 'modules/validation'
 
 # Железнодорожная станция
 class RailwayStation
   include Instances
+  include Validation
+
+  # 2 символа или больше
+  NAME_FORMAT = /.{2,}/
 
   attr_reader :name, :trains
+  validate :name, :presence
+  validate :name, :format, NAME_FORMAT
 
   def initialize(name)
-    @name = name.to_s
+    @name = name.to_s.strip
     validate!
     @trains = []
     register_instance
@@ -42,22 +49,7 @@ class RailwayStation
     end
   end
 
-  def valid?
-    validate!
-  rescue StandardError
-    false
-  end
-
   def each_train(&block)
     trains.each(&block)
-  end
-
-  protected
-
-  def validate!
-    raise 'У станции должно быть название' if name.nil? || name.empty?
-    raise 'Название станции должно состоять как минимум из 2 символов' if name.size < 2
-
-    true
   end
 end
