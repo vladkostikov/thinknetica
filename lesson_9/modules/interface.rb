@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require_relative '../route'
 require_relative 'interface/station_actions'
 require_relative 'interface/train_actions'
 require_relative 'interface/carriage_actions'
-require_relative '../route'
 
 # Текстовый интерфейс программы
 module Interface

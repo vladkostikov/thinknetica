@@ -2,11 +2,13 @@
 
 require_relative '../modules/manufacturer'
 require_relative '../modules/instances'
+require_relative '../modules/accessors'
 
 # Поезд
 class Train
   include Manufacturer
   include Instances
+  include Accessors
 
   # Формат номера: 5 букв или цифр в любом порядке,
   # после 3 символа может быть дефис (необязательно)
@@ -16,7 +18,9 @@ class Train
   IMPOSSIBLE_ATTACH_DETACH = 'Невозможно прицеплять и отцеплять вагоны во время движения.'
   DEFAULT_SPEED = 80
 
-  attr_accessor :station, :previous_station, :route
+  strong_attr_accessor :station, RailwayStation
+  strong_attr_accessor :previous_station, RailwayStation
+  strong_attr_accessor :route, Route
   attr_reader :carriages, :speed, :number
 
   def self.find(number)
