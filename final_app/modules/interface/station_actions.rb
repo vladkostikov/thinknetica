@@ -5,9 +5,7 @@ require_relative '../../railway_station'
 # Действия со станциями
 module StationActions
   def create_station
-    print 'Название станции: '
-    name = gets.chomp
-
+    name = ask_name
     station = RailwayStation.new(name)
     puts "Станция #{station.name} создана."
   rescue StandardError
@@ -45,5 +43,31 @@ module StationActions
       puts "#{station_index + 1}. #{station.info}"
       station.print_trains_info
     end
+  end
+
+  def ask_name
+    print 'Название станции: '
+    gets.strip
+  end
+
+  def rename_station
+    puts 'Какую станцию переименовать?'
+    station = ask_station
+    old_name = station.name
+
+    begin
+      name = ask_name
+      raise NameError if RailwayStation.find(name) && station.name != name
+
+      station.rename(name)
+    rescue NameError
+      puts 'Станция с таким названием уже существует'
+      retry
+    rescue StandardError
+      puts 'Название станции должно состоять как минимум из 2 символов'
+      retry
+    end
+
+    puts "Станция #{old_name} успешно переименована в #{station.name}"
   end
 end

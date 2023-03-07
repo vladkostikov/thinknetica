@@ -54,7 +54,7 @@ module TrainActions
     puts "\nФормат номера: 5 букв или цифр в любом порядке, после 3 символа "\
        'может быть дефис (необязательно)'
     print 'Введите номер поезда: '
-    gets.chomp
+    gets.strip
   end
 
   def print_trains
@@ -76,14 +76,36 @@ module TrainActions
   end
 
   def move_train
-    puts 'Какой поезд хотите переместить?'
+    puts 'Какой поезд хотите отправить?'
     train = ask_train
-    puts 'На какую станцию хотите переместить поезд?'
+    puts 'На какую станцию хотите отправить поезд?'
     station = ask_station
 
     station.receive_train(train)
-    puts "Поезд успешно перемещён на станцию #{station.name}."
+    puts "Поезд успешно отправлен на станцию #{station.name}."
   end
+
+  def change_train_number
+    puts 'У какого поезда изменить номер?'
+    train = ask_train
+
+    begin
+      number = ask_number_of_train
+      raise NameError if Train.find(number) && train.number != number
+
+      train.change_number(number)
+    rescue NameError
+      puts 'Поезд с таким номером уже существует'
+      retry
+    rescue StandardError
+      puts 'Неправильный формат номера'
+      retry
+    end
+
+    puts 'Номер поезда успешно изменён.', train
+  end
+
+  private
 
   def trains
     CargoTrain.all + PassengerTrain.all

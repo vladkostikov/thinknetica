@@ -9,9 +9,10 @@ class RailwayStation
   include Validation
 
   # 2 символа или больше
-  NAME_FORMAT = /.{2,}/
+  NAME_FORMAT = /.{2,}/.freeze
 
   attr_reader :name, :trains
+
   validate :name, :presence
   validate :name, :format, NAME_FORMAT
 
@@ -51,5 +52,14 @@ class RailwayStation
 
   def each_train(&block)
     trains.each(&block)
+  end
+
+  def rename(name)
+    validate_format(name, NAME_FORMAT)
+    @name = name.strip
+  end
+
+  def self.find(name)
+    all.find { |station| station.name == name }
   end
 end

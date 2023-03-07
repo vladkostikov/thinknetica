@@ -25,12 +25,8 @@ class Train
   attr_accessor :previous_station
   attr_reader :carriages, :speed, :number
 
-  def self.find(number)
-    all.find { |train| train.number == number }
-  end
-
   def initialize(number)
-    @number = number.to_s.strip
+    @number = number.strip
     validate!
     @carriages = []
     @speed = 0
@@ -95,7 +91,8 @@ class Train
   end
 
   def change_number(number)
-    @number = number.to_s
+    validate_format(number, NUMBER_FORMAT)
+    @number = number.strip
   end
 
   def each_carriage(&block)
@@ -105,6 +102,10 @@ class Train
   protected
 
   attr_writer :number
+
+  def self.find(number)
+    all.find { |train| train.number == number }
+  end
 
   def register_instance
     self.class.add_instance(self)
